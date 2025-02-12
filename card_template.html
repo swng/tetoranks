@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  font-family: Arial, sans-serif;
+}
+
+.stat-card {
+  width: 280px;
+  padding: 20px;
+  border-radius: 12px;
+  color: white;
+  position: relative;
+}
+
+.logo-placeholder {
+  width: 120px;
+  height: 120px;
+  margin: 10px auto 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.player-count {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.players-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.number {
+  font-size: 36px;
+  font-weight: bold;
+  margin: 0;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.number sup {
+  font-size: 18px;
+  vertical-align: super;
+  margin-left: 2px;
+  font-weight: normal;
+}
+
+.players {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 5px 0 0;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.percentile {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  position: relative;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  white-space: nowrap;
+}
+
+.percentile::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-style: solid;
+  border-width: 6px 6px 6px 0;
+  border-color: transparent rgba(255, 255, 255, 0.1) transparent transparent;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 1px;
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.stat-item {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 12px 8px;
+  text-align: center;
+}
+
+.stat-item:nth-child(1) { border-radius: 3px 0 0 0; }
+.stat-item:nth-child(2) { border-radius: 0 3px 0 0; }
+.stat-item:nth-child(3) { border-radius: 0 0 0 3px; }
+.stat-item:nth-child(4) { border-radius: 0 0 3px 0; }
+
+.stat-label {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 8px 0;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="stat-card" id="statCard">
+    <div class="logo-placeholder" id="logo"></div>
+    <div class="player-count">
+      <p class="number" id="tr">23386<sup>TR</sup></p>
+      <div class="players-container">
+        <p class="players" id="players">1,888 PLAYERS</p>
+        <span class="percentile" id="percentile">TOP 1.2%</span>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <p class="stat-label">APM</p>
+        <p class="stat-value" id="apm">75.71</p>
+      </div>
+      <div class="stat-item">
+        <p class="stat-label">VS</p>
+        <p class="stat-value" id="vs">156.61</p>
+      </div>
+      <div class="stat-item">
+        <p class="stat-label">PPS</p>
+        <p class="stat-value" id="pps">2.12</p>
+      </div>
+      <div class="stat-item">
+        <p class="stat-label">APP</p>
+        <p class="stat-value" id="app">0.59</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const themes = {
+  'X+': {
+    name: 'X+',
+    primary: '#b126ff',
+    secondary: '#791180',
+    accent: '#ff00ff'
+  },
+  X: {
+    name: 'X',
+    primary: '#b126ff',
+    secondary: '#791180',
+    accent: '#ff00ff'
+  },
+  U: {
+    name: 'U',
+    primary: '#ff4800',
+    secondary: '#712504',
+    accent: '#ff2200'
+  },
+  SS: {
+    name: 'SS',
+    primary: '#ffa000',
+    secondary: '#9f5c00',
+    accent: '#ffd700'
+  },
+  'S+': {
+    name: 'S+',
+    primary: '#c49000',
+    secondary: '#926b00',
+    accent: '#ffe44d'
+  },
+  S: {
+    name: 'S',
+    primary: '#a37300',
+    secondary: '#775400',
+    accent: '#ffd24d'
+  },
+  'S-': {
+    name: 'S-',
+    primary: '#866a06',
+    secondary: '#5f4e04',
+    accent: '#d4af37'
+  },
+  'A+': {
+    name: 'A+',
+    primary: '#1a8f0c',
+    secondary: '#126309',
+    accent: '#32cd32'
+  },
+  A: {
+    name: 'A',
+    primary: '#117922',
+    secondary: '#0c5919',
+    accent: '#28a428'
+  },
+  'A-': {
+    name: 'A-',
+    primary: '#0b785c',
+    secondary: '#085743',
+    accent: '#1e901e'
+  },
+  'B+': {
+    name: 'B+',
+    primary: '#1759a9',
+    secondary: '#11406a',
+    accent: '#1e90ff'
+  },
+  B: {
+    name: 'B',
+    primary: '#132aa3',
+    secondary: '#0e1f6a',
+    accent: '#4169e1'
+  },
+  'B-': {
+    name: 'B-',
+    primary: '#2a15b8',
+    secondary: '#1e0f78',
+    accent: '#0000cd'
+  },
+  'C+': {
+    name: 'C+',
+    primary: '#1a0326',
+    secondary: '#0f0219',
+    accent: '#8a2be2'
+  },
+  C: {
+    name: 'C',
+    primary: '#260433',
+    secondary: '#190320',
+    accent: '#6a1b9a'
+  },
+  'C-': {
+    name: 'C-',
+    primary: '#3c1249',
+    secondary: '#270c32',
+    accent: '#4a148c'
+  },
+  'D+': {
+    name: 'D+',
+    primary: '#652063',
+    secondary: '#431742',
+    accent: '#800080'
+  },
+  D: {
+    name: 'D',
+    primary: '#783275',
+    secondary: '#50224e',
+    accent: '#4b0082'
+  }
+};
+
+function applyTheme(theme) {
+  const card = document.getElementById('statCard');
+  const logo = document.getElementById('logo');
+  
+  // Update card style
+  card.style.backgroundColor = theme.secondary;
+  card.style.boxShadow = `
+    inset 0 1px 2px rgba(255, 255, 255, 0.3),
+    1px 1px 0 rgba(255, 255, 255, 0.2),
+    -1px -1px 0 rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(0, 0, 0, 0.8)
+  `;
+  
+  // Update logo glow
+  logo.style.filter = `drop-shadow(0 0 10px ${theme.accent})`;
+}
+
+// Initialize with theme
+applyTheme(themes.X);
+</script>
+</body>
+</html>
